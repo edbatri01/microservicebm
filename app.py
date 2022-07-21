@@ -68,7 +68,7 @@ def get_products():
 
     if(lista):
 
-        data_dicccionary['product']=lista
+        data_dicccionary['items']=lista
 
     return data_dicccionary
 
