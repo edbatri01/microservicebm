@@ -518,7 +518,7 @@ def filter_price_product():
     if parameter.get('id'):
         id = parameter['id']
         result = db.session.query(Products,Listitems).join(Listitems, Products.id == Listitems.id_product). \
-        filter(Products.id == id).order_by(Listitems.price.desc())        
+        filter(Listitems.id == id).order_by(Listitems.price.desc())        
         data_dicccionary = {}
         lista = []
         print(result)
