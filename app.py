@@ -535,6 +535,30 @@ def filter_price_product():
 
     else:
         jsonify("debes mandar el id")
+
+@app.route('/filterPriceProductObjects', methods=['POST'])
+def filter_price_product_objects():
+    parameter = request.get_json()
+    if parameter.get('id'):
+        id = parameter['id']
+        result = db.session.query(Products,Listitems).join(Listitems, Products.id == Listitems.id_product). \
+        filter(Products.id == id).order_by(Listitems.price.desc())        
+        data_dicccionary = {}
+        lista = []
+        print(result)
+        if result:
+            for product, listitem in result:
+                shop = Shop.query.filter_by(id_list_items = (listitem.id_list)).first()
+                lista.append({'id':product.id,'code':product.code,'product_name':product.name,'url_image':product.url_image,'List_item_id':listitem.id,'price':listitem.price,'shop_id':shop.id,'shop_name':shop.name,'shop_img':shop.img})
+
+        if lista:
+            data_dicccionary['Product Filter']= lista
+            
+        return data_dicccionary
+
+
+    else:
+        jsonify("debes mandar el id")
     
 if __name__ == '__main__':
     
