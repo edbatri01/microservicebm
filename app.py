@@ -72,7 +72,7 @@ def get_products():
 
     return data_dicccionary
 
-@app.route('/productsFilterByNameList', methods=['GET'])
+@app.route('/productsFilterByNameList', methods=['POST'])
 def filter_products_by_name_list():
     parameter = request.get_json()
     search = '%{}%'.format(parameter['name'])
@@ -87,7 +87,7 @@ def filter_products_by_name_list():
     return data_dicccionary
 
 
-@app.route('/productFilterByNameOne', methods=['GET'])
+@app.route('/productFilterByNameOne', methods=['POST'])
 def filter_product_by_name():
     parameter = request.get_json()
     name = parameter['name']
@@ -474,7 +474,7 @@ def delete_items():
     else:
         jsonify("debes mandar el id")
 
-@app.route('/filterPriceByshop', methods=['GET'])
+@app.route('/filterPriceByshop', methods=['POST'])
 def filter_price_by_shop():
     parameter = request.get_json()
     if parameter.get('id_product'):
@@ -512,7 +512,7 @@ def filter_price_by_shop():
     else:
         return jsonify("Debes mandar un id de producto")
 
-@app.route('/filterPriceProduct', methods=['GET'])
+@app.route('/filterPriceProduct', methods=['POST'])
 def filter_price_product():
     parameter = request.get_json()
     if parameter.get('id'):
