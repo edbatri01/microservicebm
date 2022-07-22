@@ -502,7 +502,7 @@ def filter_price_by_shop():
                 shop = Shop.query.filter_by(id_list_items = (listitem.id_list)).all()
                 for s in shop:
 
-                    lista.append({'id':product.id,'code':product.code,'product_name':product.name,'url_image':product.url_image,'price':listitem.price,'shop_name':s.name,'shop_img':s.img})
+                    lista.append({'id':product.id,'code':product.code,'product_name':product.name,'url_image':product.url_image,'price':listitem.price,'id_list_item':listitem.id,'id_list':listitem.id_list,'shop_name':s.name,'shop_img':s.img})
         
         if lista:
             data_dicccionary['products_by_shop']=lista
