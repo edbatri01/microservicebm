@@ -79,18 +79,20 @@ def filter_products_by_name_list():
         search = '%{}%'.format(parameter['name'])
         data_dicccionary = {}
         lista = []
-        result = db.session.query(Products,Shop,Listitems).join(Shop, Products.shop_id == Shop.id).join(Listitems, Products.id == Listitems.id_product).filter(Products.name.like(search)).all()
-        print(result)
-        for i in result:
-            print(i)
+        results = db.session.query(Products,Listitems,Shop).join(Listitems, Products.id == Listitems.id_product). \
+        join(Shop, Shop.id_list_items == Listitems.id_list). \
+        filter(Products.name.like(search)).order_by(Listitems.price.asc()).all()
+        
+        for i in results:
+           
             lista.append({'id':i.Products.id,'name':i.Products.name,'code':i.Products.code, 'status':i.Products.status,'url_image':i.Products.url_image,'id_category':i.Products.id_category,'shop_id':i.Products.shop_id,'shop_name':i.Shop.name,'shop_img':i.Shop.img,'price':i.Listitems.price})
 
-        if result:
+        if results:
 
             data_dicccionary['product'] = lista
         return data_dicccionary
     else:
-        return make_response(jsonify("debes mandar un id"),400)
+        return make_response(jsonify("debes mandar un nombre"),400)
 
 
 @app.route('/productFilterByNameOne', methods=['POST'])
