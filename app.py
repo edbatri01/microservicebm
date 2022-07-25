@@ -60,11 +60,11 @@ def home():
 
 @app.route('/getProducts', methods=['GET'])
 def get_products():
-    listProducts = Products.query.all()
+    results = db.session.query(Products,Listitems).join(Listitems, Products.id == Listitems.id_product).all()
     data_dicccionary = {}
     lista = []
-    for i in listProducts:
-        lista.append({'id':i.id,'name':i.name,'code':i.code, 'status':i.status,'url_image':i.url_image,'id_category':i.id_category,'shop_id':i.shop_id})
+    for i,l in results:
+        lista.append({'id':i.id,'name':i.name,'code':i.code, 'status':i.status,'url_image':i.url_image,'id_category':i.id_category,'shop_id':i.shop_id,'price':l.price})
 
     if(lista):
 
@@ -75,33 +75,43 @@ def get_products():
 @app.route('/productsFilterByNameList', methods=['POST'])
 def filter_products_by_name_list():
     parameter = request.get_json()
-    search = '%{}%'.format(parameter['name'])
-    print('search: ',search)
-    data_dicccionary = {}
-    lista = []
-    produts = Products.query.filter(Products.name.like(search)).all()
-    for i in produts:
-        lista.append({'id':i.id,'name':i.name,'code':i.code, 'status':i.status,'url_image':i.url_image,'id_category':i.id_category,'shop_id':i.shop_id})
+    if parameter.get('name'):
+        search = '%{}%'.format(parameter['name'])
+        data_dicccionary = {}
+        lista = []
+        result = db.session.query(Products,Shop,Listitems).join(Shop, Products.shop_id == Shop.id).join(Listitems, Products.id == Listitems.id_product).filter(Products.name.like(search)).all()
+        print(result)
+        for i in result:
+            print(i)
+            lista.append({'id':i.Products.id,'name':i.Products.name,'code':i.Products.code, 'status':i.Products.status,'url_image':i.Products.url_image,'id_category':i.Products.id_category,'shop_id':i.Products.shop_id,'shop_name':i.Shop.name,'shop_img':i.Shop.img,'price':i.Listitems.price})
 
-    data_dicccionary['product'] = lista
-    return data_dicccionary
+        if result:
+
+            data_dicccionary['product'] = lista
+        return data_dicccionary
+    else:
+        return make_response(jsonify("debes mandar un id"),400)
 
 
 @app.route('/productFilterByNameOne', methods=['POST'])
 def filter_product_by_name():
     parameter = request.get_json()
-    name = parameter['name']
-    search = '%{}%'.format(name)
-    print(search)
-    data_dicccionary = {}
-    lista = []
-    product = Products.query.filter(Products.name.like(search)).first()
-    if(product):
-        lista.append({'id':product.id,'name':product.name,'code':product.code, 'status':product.status,'url_image':product.url_image,'id_category':product.id_category,'shop_id':product.shop_id})
-        data_dicccionary['product'] = lista
+    if parameter.get('name'):
+        name = parameter['name']
+        search = '%{}%'.format(name)
+        data_dicccionary = {}
+        lista = []
+        product =  db.session.query(Products,Shop,Listitems).join(Shop, Shop.id == Products.id).join(Listitems, Products.id == Listitems.id_product).filter(Products.name.like(search)).first()
+        print(product.Listitems.price)
+        if(product):
+            
+            lista.append({'id':product.Products.id,'name':product.Products.name,'code':product.Products.code, 'status':product.Products.status,'url_image':product.Products.url_image,'id_category':product.Products.id_category,'shop_id':product.Products.shop_id,'shop_name':product.Shop.name,'shop_img':product.Shop.img,'price':product.Listitems.price})
+            data_dicccionary['product'] = lista
 
-    
-    return data_dicccionary
+        
+        return data_dicccionary
+    else:
+        return make_response(jsonify("debes mandar un id"),400)
 
 @app.route('/insertProduct', methods=['POST'])
 def inser_product():
@@ -490,7 +500,7 @@ def filter_price_by_shop():
         # add_columns(Shop.name,Shop.img). \
         # filter(Products.id == id).all()
         results = db.session.query(Products,Listitems).join(Listitems, Products.id == Listitems.id_product). \
-        filter(Products.id == id).order_by()
+        filter(Products.id == id).order_by(Listitems.price.desc())
         data_dicccionary = {}
         lista = []
         print(results)
