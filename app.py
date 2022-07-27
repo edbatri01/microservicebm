@@ -66,11 +66,15 @@ def politicas():
 
 @app.route('/getProducts', methods=['GET'])
 def get_products():
-    results = db.session.query(Products,Listitems).join(Listitems, Products.id == Listitems.id_product).all()
+    # #results = db.session.execute(Products).fetch
+    # results = Products.query.all()
+    # print(results)
+    # return jsonify(results)
+    results = db.session.query(Products).all()
     data_dicccionary = {}
     lista = []
-    for i,l in results:
-        lista.append({'id':i.id,'name':i.name,'code':i.code, 'status':i.status,'url_image':i.url_image,'id_category':i.id_category,'shop_id':i.shop_id,'price':l.price})
+    for i in results:
+        lista.append({'id':i.id,'name':i.name,'code':i.code, 'status':i.status,'url_image':i.url_image,'id_category':i.id_category,'shop_id':i.shop_id})
 
     if(lista):
 
