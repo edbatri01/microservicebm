@@ -1,4 +1,4 @@
-from flask import Flask, request, json, Response, make_response, jsonify
+from flask import Flask, request, json, Response, make_response, jsonify,render_template
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -56,6 +56,12 @@ def home():
     return jsonify(message)
     # result = Products.query.count()
     # return jsonify(result)
+
+@app.route('/politicasdeprivacidad',methods=['GET'])
+def politicas():
+    
+    return render_template('politicas.html')
+    
     
 
 @app.route('/getProducts', methods=['GET'])
